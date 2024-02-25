@@ -88,9 +88,47 @@ add_library(share::library ALIAS)
 target_link_library(exe PRIVATE share::library)
 ```
 
-
-
 ### 1.F Installing
+
+```
+
+$ tree
+.
+├── cmake-examples.conf
+├── CMakeLists.txt
+├── include
+│   └── installing
+│       └── Hello.h
+├── README.adoc
+└── src
+    ├── Hello.cpp
+    └── main.cpp
+```
+
+CMake 通过CMAKE_INSTALL_PREFIX设置安装路径。可以通过如下命令行控制安装位置
+
+```bash
+cmake .. -DCMAKE_INSTALL_PREFIX=/install/location
+```
+
+同时也可以使用CMake GUI进行控制
+
+CMake 通过 `install()`函数安装如下
+
+```cmake
+add_execable
+# 安装二进制目标 binary 到${CMAKE_INSTALL_PREFIX}/bin
+install(TARGETS binary DESTINATION bin)
+
+# 安装library 到${CMAKE_INSTALL_PREFIX}/lib
+install(TARGETS library LIBRARY DESTINATION lib)
+
+# 安装include 目录到${CMAKE_INSTALL_PREFIX}/include
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
+
+# 安装配置文件到 ${CMAKE_INSTALL_PREFIX}/etc
+intsall(FILES cmake-examples.conf DESTINATION etc)
+```
 
 ### 1.G Build Type
 
