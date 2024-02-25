@@ -18,7 +18,17 @@ endif()
 add_executable(third_party_include main.cpp)
 
 # link against the boost libraries
-target_link_libraries( third_party_include
+# target_link_libraries( third_party_include
+#     PRIVATE
+#         Boost::filesystem
+# )
+
+target_include_directories( third_party_include
     PRIVATE
-        Boost::filesystem
+        ${Boost_INCLUDE_DIRS}
+)
+target_link_libraries(third_party_include
+    PRIVATE
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_SYSTEM_LIBRARY}
 )
