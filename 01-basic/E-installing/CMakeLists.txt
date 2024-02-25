@@ -42,7 +42,8 @@ install (TARGETS cmake_examples_inst_bin
 # Library
 # Note: may not work on windows
 install (TARGETS cmake_examples_inst
-    LIBRARY DESTINATION lib)
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin)
 
 # Header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ 
