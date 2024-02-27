@@ -1,9 +1,10 @@
-= Sub-Project Examples
+# CMake Sub-Projects
 
-Many large projects are made up of different libraries and binaries. These
-can be organised into multiple folders and sub-projects to ease development.
+本例展示了如何设置一个包含子项目的 CMake 项目。顶层 CMakeLists.txt 会调用子目录中的 CMakeLists.txt，以创建以下内容：
 
-The examples included are
++ sublibrary1 - 静态库
++ sublibrary2 - 一个只有头文件的库
++ subbinary - 一个可执行程序
 
-  - link:A-basic[basic] - This basic example includes a static library, a header only library
-  and an executable
+## Sublibrary1 - 静态库
+
