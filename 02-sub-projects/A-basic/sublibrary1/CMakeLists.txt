@@ -1,10 +1,11 @@
-# Set the project name
-project (sublibrary1)
+cmake_minimum_required(VERSION 3.5)
 
-# Add a library with the above sources
+project(sublibrary1_demo)
+
 add_library(${PROJECT_NAME} src/sublib1.cpp)
 add_library(sub::lib1 ALIAS ${PROJECT_NAME})
 
-target_include_directories( ${PROJECT_NAME}
-    PUBLIC ${PROJECT_SOURCE_DIR}/include
-)
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+ )
