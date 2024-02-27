@@ -210,13 +210,133 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DEX2" CACHE STRING "Set C++ Compiler F
   cmake .. -DCMKAE_CXX_FLAGS="-DEX3"
   ```
 
-  
-
-  
-
 ### 1.I Third Party Library
 
+第三方库使用是很常见的，要求包含第三方库、头文件或程序。CMake 支持使用 **`find_package() `**函数查找这些工具的路径。这将从 CMAKE_MODULE_PATH 文件夹列表中搜索格式为 "FindXXX.cmake "的 CMake 模块。在 Linux 下，默认搜索路径包括 /usr/share/cmake/Modules
+
+#### Finding a Package
+
+如上所述，`find_package()` 函数将从 `CMAKE_MODULE_PATH` 文件夹列表中搜索格式为 "FindXXX.cmake "的 CMake 模块。
+
+`find_package` 参数的具体格式取决于您要查找的模块。这通常记录在 FindXXX.cmake 文件的顶部。
+
+**FindBoost.cmake**顶部文件如下：
+
+```cmake
+  find_package(Boost
+    [version] [EXACT]      # Minimum or EXACT version e.g. 1.67.0
+    [REQUIRED]             # Fail with error if Boost is not found
+    [COMPONENTS <libs>...] # Boost libraries by their canonical name
+                           # e.g. "date_time" for "libboost_date_time"
+    [OPTIONAL_COMPONENTS <libs>...]
+                           # Optional Boost libraries by their canonical name)
+    )                      # e.g. "date_time" for "libboost_date_time"
+
+```
+
+基础例子如下：
+
+```cmake
+find_package(Boost 1.46.1 REQUIRED COMPOMENTS filsesystem systme)
+```
+
+* Boost - Name of the library. This is part of used to find the module file FindBoost.cmake
+  * 1.46.1 - The minimum version of boost to find
+  * REQUIRED - Tells the module that this is required and to fail if it cannot be found
+  * COMPONENTS - The list of components to find in the library.
+
+#### 检查是否找到软件包
+
+```cmake
+if (Boost_FOUND)
+	message("Boost Found")
+else ()
+	message(FATAL_ERROR "Cannot find Boost")
+endif()
+```
+
+#### 导出变量
+
+找到软件包后，它通常会导出变量，告诉用户在哪里可以找到库、头文件或可执行文件。与 XXX_FOUND 变量类似，这些变量是针对特定软件包的，通常记录在 FindXXX.cmake 文件的顶部。如：
+
+```cmake
+# FindBoost.cmake
+``Boost_FOUND``
+  True if headers and requested libraries were found.
+
+``Boost_INCLUDE_DIRS``
+  Boost include directories.
+
+``Boost_LIBRARY_DIRS``
+  Link directories for Boost libraries.
+
+``Boost_LIBRARIES``
+  Boost component libraries to be linked.
+
+``Boost_<COMPONENT>_FOUND``
+  True if component ``<COMPONENT>`` was found (``<COMPONENT>`` name is upper-case).
+
+``Boost_<COMPONENT>_LIBRARY``
+  Libraries to link for component ``<COMPONENT>`` (may include
+  :command:`target_link_libraries` debug/optimized keywords).
+
+``Boost_VERSION_MACRO``
+  ``BOOST_VERSION`` value from ``boost/version.hpp``.
+
+``Boost_VERSION_STRING``
+  Boost version number in ``X.Y.Z`` format.
+
+``Boost_VERSION``
+  Boost version number in ``X.Y.Z`` format (same as ``Boost_VERSION_STRING``).
+```
+
+#### 别名/导入目标
+
+大多数现代CMake库在它们的模块文将中导出别名(ALIAS)目标。导入目标(Imported)的好处是，它们还可以填充包含目录和链接库。
+
+与在 libraires 中使用自己的 ALIAS 目标类似，在模块中使用 ALIAS 可以更方便地引用找到的目标。
+
++ `Boost::boost` 仅用于头文件库
++ `Boost::system  `用于 boost 系统库。
++ `Boost::filesystem` 用于文件系统库。
+
+我么可以使用如下方式连接库:
+
+```cmake
+target_link_library(targets PRIVATE Boost::filesystem)
+```
+
+#### 非别名目标
+
+并不是所有模块都有导入目标因此我们通常使用如下变量：
+
++ XXX_INCLUDE_DIRS 指向库的 include 目录的变量。
++ XXX_LIBRARY 指向图书馆路径的变量。
+
+因此我们可以使用`target_include_directories() 和 target_link_library()`：
+
+```
+target_include_directouries(target PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_library(target 
+	PRIVATE 
+		${Boost_SYSTEM_LIBRARY}
+		${Boost_FILESYSTEM_LIBRARY}
+)
+```
+
+
+
 ### 1.J Imported Targets
+
+**Imported Targets(导入目标)**是被FindXXX 模块导出的 只读目标
+
+要加入 boost 文件系统，可以执行以下操作：
+
+```cmake
+target_link_library(imported_target PRIVATE Boost::filesystem)
+```
+
+这将自动链接ilesystem 和 system 库同时包含 Boost 的 include 目录
 
 ### 1.K Cpp Standard
 
